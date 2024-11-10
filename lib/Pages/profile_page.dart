@@ -4,6 +4,7 @@ import '../Components/custom_action_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart'; // Для использования kIsWeb
 import 'dart:io'; // Для проверки платформы
+import '../Services/auth_service.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -14,10 +15,61 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
 
+  final NetworkService _networkService = NetworkService();
+  String? fullName;
+  String? email;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+    Future<void> _loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getInt('userId');
+
+    if (userId == null) {
+      setState(() {
+        isLoading = false;
+      });
+      return;
+    }
+
+    final response = await _networkService.getUserData(userId);
+    if (response['success'] == true) {
+      setState(() {
+        fullName = response['userData']['fullName'];
+        email = response['userData']['email'];
+        isLoading = false;
+      });
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(response['error'] ?? 'Failed to load user data')),
+      );
+    }
+  }
+
   Future<void> _logout() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isLogged', false);
-    await prefs.remove('userId');
+    final response = await _networkService.logout();
+
+    if (response['success'] == true) {
+      // Успешный logout
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        '/login',
+        (Route<dynamic> route) => false,
+      );
+    } else {
+      // Обработка ошибки
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(response['error'] ?? 'Logout failed')),
+      );
+    }
   }
 
   @override
@@ -61,14 +113,20 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
                 const SizedBox(width: 13),
-                const Text(
-                  'Anna Montana',
-                  style: TextStyle(
+                Flexible(
+                  child: Text(
+                    fullName ?? 'Loading...',
+                    style: const TextStyle(
                       fontSize: 25,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white),
+                      color: Colors.white,
+                    ),
+                    overflow: TextOverflow.ellipsis, // Обрезка текста с троеточием
+                    maxLines: 1, // Установка максимального количества строк
+                  ),
                 ),
-                const Spacer(),
+                const SizedBox(width: 13),
+                // const Spacer(),
                 const ImageIcon(
                   AssetImage('assets/images/edit.png'),
                   color: Colors.white,
@@ -127,7 +185,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ],
         ),
-        const SizedBox(height: 70),
+        const SizedBox(height: 120),
       ],
     );
 

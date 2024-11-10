@@ -34,8 +34,6 @@ class _LoginPageState extends State<LoginPage> {
     final result = await _authService.login(email, password);
 
     if (result['success']) {
-      int userId = result['userId'];
-      await _saveLoginState(userId, email, password); // Сохраняем email и password
 
       Navigator.pushAndRemoveUntil(
         context,
@@ -63,13 +61,13 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  Future<void> _saveLoginState(int userId, String email, String password) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isLogged', true);
-    await prefs.setInt('userId', userId);
-    await prefs.setString('email', email); // Сохраняем email
-    await prefs.setString('password', password); // Сохраняем password
-  }
+  // Future<void> _saveLoginState(int userId, String email, String password) async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   await prefs.setBool('isLogged', true);
+  //   await prefs.setInt('userId', userId);
+  //   await prefs.setString('email', email); // Сохраняем email
+  //   await prefs.setString('password', password); // Сохраняем password
+  // }
 
   void _checkFields() {
     setState(() {

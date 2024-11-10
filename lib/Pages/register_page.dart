@@ -50,8 +50,6 @@ class _RegisterPageState extends State<RegisterPage> {
     final result = await _authService.register(fullName, email, password, confirmPassword);
 
     if (result['success']) {
-      int userId = result['userId'];
-      await _saveLoginState(userId); 
 
       Navigator.pushAndRemoveUntil(
         context,
@@ -77,12 +75,6 @@ class _RegisterPageState extends State<RegisterPage> {
         },
       );
     }
-  }
-
-  Future<void> _saveLoginState(int userId) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isLogged', true);
-    await prefs.setInt('userId', userId);
   }
 
   @override

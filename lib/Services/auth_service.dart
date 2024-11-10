@@ -3,10 +3,11 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class NetworkService {
+
   final String baseUrl = 'http://localhost:8080';
+
   String? _cachedSessionId;
 
-  // Получение sessionId с кэшированием для оптимизации
   Future<String?> _getSessionId() async {
     if (_cachedSessionId == null) {
       final prefs = await SharedPreferences.getInstance();
@@ -38,13 +39,14 @@ class NetworkService {
       );
 
       if (response.statusCode == 200) {
-        final cookies = response.headers['set-cookie'];
-        final sessionId = _extractSessionId(cookies);
-        if (sessionId != null) {
-          await _saveSessionData(sessionId, email, password); // Сохраняем данные
-        }
 
         final responseData = jsonDecode(response.body);
+        final sessionId = responseData['sessionId'];
+        final userId = responseData['userId'];
+
+        if (sessionId != null) {
+          await _saveSessionData(sessionId, email, password, userId);
+        }
 
         return {
           'success': true,
@@ -61,17 +63,34 @@ class NetworkService {
     }
   }
 
-  String? _extractSessionId(String? cookies) {
-    if (cookies == null) return null;
-    return cookies.split(';').firstWhere((part) => part.trim().startsWith('sessionId=')).split('=')[1];
-  }
+  Future<Map<String, dynamic>> getUserData(int userId) async {
+    final sessionId = await _getSessionId();
+    if (sessionId == null) {
+      return {'success': false, 'error': 'No session ID found'};
+    }
 
-  Future<void> _saveSessionData(String sessionId, String email, String password) async {
-    final prefs = await SharedPreferences.getInstance();
-    _cachedSessionId = sessionId; // Кэшируем sessionId
-    await prefs.setString('sessionId', sessionId);
-    await prefs.setString('email', email);
-    await prefs.setString('password', password);
+    final url = Uri.parse('$baseUrl/user?userId=$userId');
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $sessionId',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        return {
+          'success': true,
+          'userData': responseData,
+        };
+      } else {
+        return _handleErrorResponse(response);
+      }
+    } catch (e) {
+      return {'success': false, 'error': 'Failed to retrieve user data. Please try again later.'};
+    }
   }
 
   Future<Map<String, dynamic>> register(String fullName, String email, String password, String confirmPassword) async {
@@ -91,10 +110,18 @@ class NetworkService {
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
+        final sessionId = responseData['sessionId'];
+        final userId = responseData['userId'];
+
+        if (sessionId != null && userId != null) {
+          await _saveSessionData(sessionId, email, password, userId); // Сохраняем sessionId, userId, email и password
+        }
+
         return {
           'success': true,
           'message': responseData['message'],
-          'userId': responseData['userId'],
+          'userId': userId,
+          'sessionId': sessionId,
         };
       } else {
         return _handleErrorResponse(response);
@@ -103,6 +130,7 @@ class NetworkService {
       return {'success': false, 'error': 'Something went wrong. Please try again later.'};
     }
   }
+
 
   Future<List<Map<String, dynamic>>> getPopularCars() async {
     return _getWithSession('$baseUrl/cars/popular');
@@ -116,6 +144,7 @@ class NetworkService {
     return _getWithSession('$baseUrl/promotions');
   }
 
+
   Future<List<Map<String, dynamic>>> _getWithSession(String url) async {
     final sessionId = await _getSessionId();
     try {
@@ -123,7 +152,7 @@ class NetworkService {
         Uri.parse(url),
         headers: {
           'Content-Type': 'application/json',
-          if (sessionId != null) 'Cookie': 'sessionId=$sessionId',
+          if (sessionId != null) 'Authorization': 'Bearer $sessionId',
         },
       );
 
@@ -136,6 +165,58 @@ class NetworkService {
       return [];
     }
   }
+
+  Future<Map<String, dynamic>> logout() async {
+    final url = Uri.parse('$baseUrl/logout');
+    final sessionId = await _getSessionId();
+
+    if (sessionId == null) {
+      return {'success': false, 'error': 'No session found to logout'};
+    }
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $sessionId',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Очищаем данные сессии из SharedPreferences
+        await _clearSessionData();
+
+        return {
+          'success': true,
+          'message': jsonDecode(response.body)['message'],
+        };
+      } else {
+        return _handleErrorResponse(response);
+      }
+    } catch (e) {
+      return {'success': false, 'error': 'Something went wrong. Please try again later.'};
+    }
+  }
+
+  Future<void> _saveSessionData(String sessionId, String email, String password, int userId) async {
+    final prefs = await SharedPreferences.getInstance();
+    _cachedSessionId = sessionId;
+    await prefs.setString('sessionId', sessionId);
+    await prefs.setString('email', email);
+    await prefs.setString('password', password);
+    await prefs.setInt('userId', userId);
+  }
+
+  Future<void> _clearSessionData() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('sessionId');
+    await prefs.remove('email');
+    await prefs.remove('password');
+    await prefs.remove('userId');
+    _cachedSessionId = null;
+  }
+
 
   Map<String, dynamic> _handleErrorResponse(http.Response response) {
     final errorData = jsonDecode(response.body);

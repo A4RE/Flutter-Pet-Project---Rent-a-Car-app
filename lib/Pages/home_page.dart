@@ -3,6 +3,8 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../Services/auth_service.dart';
 import '../Models/car_model.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/foundation.dart'; // Для использования kIsWeb
+import 'dart:io'; // Для проверки платформы
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
