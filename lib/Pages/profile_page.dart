@@ -113,20 +113,17 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
                 const SizedBox(width: 13),
-                Flexible(
-                  child: Text(
-                    fullName ?? 'Loading...',
-                    style: const TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                    overflow: TextOverflow.ellipsis, // Обрезка текста с троеточием
-                    maxLines: 1, // Установка максимального количества строк
+                Text(
+                  fullName ?? 'Loading...',
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
+                  overflow: TextOverflow.ellipsis, // Обрезка текста с троеточием
+                  maxLines: 1, // Установка максимального количества строк
                 ),
-                const SizedBox(width: 13),
-                // const Spacer(),
+                const Spacer(),
                 const ImageIcon(
                   AssetImage('assets/images/edit.png'),
                   color: Colors.white,
