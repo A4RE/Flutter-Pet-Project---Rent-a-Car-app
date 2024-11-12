@@ -1,6 +1,11 @@
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:mime/mime.dart';
+import 'package:http_parser/http_parser.dart';
+
 
 class NetworkService {
 
@@ -93,6 +98,70 @@ class NetworkService {
     }
   }
 
+  Future<Map<String, dynamic>> updateUser({
+    String? fullName,
+    String? email,
+    dynamic photo,
+  }) async {
+    final sessionId = await _getSessionId();
+    if (sessionId == null) {
+      return {'success': false, 'error': 'No session ID found'};
+    }
+
+    final url = Uri.parse('$baseUrl/updateUser');
+    final request = http.MultipartRequest('POST', url);
+    request.headers['Authorization'] = 'Bearer $sessionId';
+
+    if (fullName != null) {
+      request.fields['fullName'] = fullName;
+    }
+    if (email != null) {
+      request.fields['email'] = email;
+    }
+
+    if (photo != null) {
+      if (photo is File) {
+        final mimeType = lookupMimeType(photo.path);
+        final mimeTypeData = mimeType != null ? mimeType.split('/') : ['image', 'jpeg'];
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'photo',
+            photo.path,
+            contentType: MediaType(mimeTypeData[0], mimeTypeData[1]),
+          ),
+        );
+      } else if (photo is Uint8List) {
+        final mimeTypeData = ['image', 'jpeg'];
+        request.files.add(
+          http.MultipartFile.fromBytes(
+            'photo',
+            photo,
+            contentType: MediaType(mimeTypeData[0], mimeTypeData[1]),
+            filename: 'uploaded_image.jpg',
+          ),
+        );
+      }
+    }
+
+    try {
+      final response = await request.send();
+      final responseBody = await response.stream.bytesToString();
+
+      if (response.statusCode == 200) {
+        if (email != null) {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('email', email);
+        }
+        
+        return {'success': true, 'message': jsonDecode(responseBody)['message']};
+      } else {
+        return _handleErrorResponse(http.Response(responseBody, response.statusCode));
+      }
+    } catch (e) {
+      return {'success': false, 'error': 'Something went wrong. Please try again later.'};
+    }
+  }
+
   Future<Map<String, dynamic>> register(String fullName, String email, String password, String confirmPassword) async {
     final url = Uri.parse('$baseUrl/register');
 
@@ -114,7 +183,7 @@ class NetworkService {
         final userId = responseData['userId'];
 
         if (sessionId != null && userId != null) {
-          await _saveSessionData(sessionId, email, password, userId); // Сохраняем sessionId, userId, email и password
+          await _saveSessionData(sessionId, email, password, userId);
         }
 
         return {
@@ -184,7 +253,6 @@ class NetworkService {
       );
 
       if (response.statusCode == 200) {
-        // Очищаем данные сессии из SharedPreferences
         await _clearSessionData();
 
         return {

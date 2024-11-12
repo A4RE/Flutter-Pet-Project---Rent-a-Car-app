@@ -6,6 +6,8 @@ import 'package:file_picker/file_picker.dart';
 import '../Components/text_field.dart';
 import '../Components/custom_action_button.dart';
 import 'package:flutter/foundation.dart';
+import '../Services/auth_service.dart';
+
 
 class EditUserPage extends StatefulWidget {
   const EditUserPage({Key? key}) : super(key: key);
@@ -21,6 +23,7 @@ class _EditUserPageState extends State<EditUserPage> {
   File? _image;
   Uint8List? _webImage;
   final ImagePicker _picker = ImagePicker();
+  final NetworkService _networkService = NetworkService();
 
   Future<void> _pickImage() async {
     if (kIsWeb) {
@@ -30,6 +33,7 @@ class _EditUserPageState extends State<EditUserPage> {
       if (result != null) {
         setState(() {
           _webImage = result.files.first.bytes;
+          _image = null; 
         });
       }
     } else {
@@ -37,10 +41,33 @@ class _EditUserPageState extends State<EditUserPage> {
       if (pickedFile != null) {
         setState(() {
           _image = File(pickedFile.path);
+          _webImage = null;
         });
       }
     }
   }
+
+  Future<void> _updateUserInfo() async {
+    String? fullName = _nameController.text;
+    String? email = _emailController.text;
+
+    final response = await _networkService.updateUser(
+      fullName: fullName,
+      email: email,
+      photo: kIsWeb ? _webImage : _image,
+    );
+
+    if (response['success']) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('User updated successfully')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: ${response['error']}')),
+      );
+    }
+  }
+
 
   @override
   void dispose() {
@@ -119,9 +146,7 @@ class _EditUserPageState extends State<EditUserPage> {
                   CustomActionButton(
                     label: 'Update info',
                     isPrimary: true,
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
+                    onTap: _updateUserInfo,
                   ),
                   const SizedBox(height: 55),
                 ],

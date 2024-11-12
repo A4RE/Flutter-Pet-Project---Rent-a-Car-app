@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import '../Components/custom_button.dart';
 import '../Components/custom_action_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/foundation.dart'; // Для использования kIsWeb
-import 'dart:io'; // Для проверки платформы
+import 'package:flutter/foundation.dart';
+import 'dart:io';
 import '../Services/auth_service.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -18,6 +18,7 @@ class _ProfilePageState extends State<ProfilePage> {
   final NetworkService _networkService = NetworkService();
   String? fullName;
   String? email;
+  String? profileImageUrl;
   bool isLoading = true;
 
   @override
@@ -42,6 +43,9 @@ class _ProfilePageState extends State<ProfilePage> {
       setState(() {
         fullName = response['userData']['fullName'];
         email = response['userData']['email'];
+        profileImageUrl = response['userData']['photo'] != null && response['userData']['photo'].isNotEmpty
+          ? 'http://localhost:8080/${response['userData']['photo']}'
+          : null;
         isLoading = false;
       });
     } else {
@@ -58,14 +62,12 @@ class _ProfilePageState extends State<ProfilePage> {
     final response = await _networkService.logout();
 
     if (response['success'] == true) {
-      // Успешный logout
       Navigator.pushNamedAndRemoveUntil(
         context,
         '/login',
         (Route<dynamic> route) => false,
       );
     } else {
-      // Обработка ошибки
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(response['error'] ?? 'Logout failed')),
       );
@@ -74,7 +76,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    // Проверка, является ли устройство мобильным (не Web)
     bool isMobile = !kIsWeb && (Platform.isAndroid || Platform.isIOS);
 
     Widget content = Column(
@@ -106,10 +107,14 @@ class _ProfilePageState extends State<ProfilePage> {
                 ClipOval(
                   child: SizedBox.fromSize(
                     size: const Size.fromRadius(24),
-                    child: Image.asset(
-                      'assets/images/userPhoto.jpg',
-                      fit: BoxFit.cover,
-                    ),
+                    child: profileImageUrl != null && profileImageUrl!.isNotEmpty
+                        ? Image.network(
+                            profileImageUrl!,
+                            fit: BoxFit.cover,
+                          )
+                        : Container(
+                            color: Colors.grey[300],
+                          ),
                   ),
                 ),
                 const SizedBox(width: 13),
