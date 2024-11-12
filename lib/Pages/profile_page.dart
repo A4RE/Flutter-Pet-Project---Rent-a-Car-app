@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rent_car_project/Pages/edit_user_page.dart';
 import '../Components/custom_button.dart';
 import '../Components/custom_action_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -81,8 +82,18 @@ class _ProfilePageState extends State<ProfilePage> {
     Widget content = Column(
       children: [
         InkWell(
-          onTap: () {
-            Navigator.pushNamed(context, '/editUserPage');
+          onTap: () async {
+            await Navigator.push(
+              context, 
+              MaterialPageRoute(
+                builder: (context) => EditUserPage(
+                  initialFullName: fullName,
+                  initialEmail: email,
+                  initialProfileImageUrl: profileImageUrl,
+                )
+                )
+              );
+            _loadUserData();
           },
           borderRadius: BorderRadius.circular(20),
           child: Container(

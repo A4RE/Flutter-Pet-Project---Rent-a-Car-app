@@ -10,20 +10,37 @@ import '../Services/auth_service.dart';
 
 
 class EditUserPage extends StatefulWidget {
-  const EditUserPage({Key? key}) : super(key: key);
+  final String? initialFullName;
+  final String? initialEmail;
+  final String? initialProfileImageUrl;
+  const EditUserPage({
+    Key? key,
+    this.initialFullName,
+    this.initialEmail,
+    this.initialProfileImageUrl,
+  }) : super(key: key);
 
   @override
   _EditUserPageState createState() => _EditUserPageState();
 }
 
 class _EditUserPageState extends State<EditUserPage> {
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
+  // final TextEditingController _nameController = TextEditingController();
+  // final TextEditingController _emailController = TextEditingController();
+  late TextEditingController _nameController;
+  late TextEditingController _emailController;
 
   File? _image;
   Uint8List? _webImage;
   final ImagePicker _picker = ImagePicker();
   final NetworkService _networkService = NetworkService();
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: widget.initialFullName);
+    _emailController = TextEditingController(text: widget.initialEmail);
+  }
 
   Future<void> _pickImage() async {
     if (kIsWeb) {
@@ -68,7 +85,6 @@ class _EditUserPageState extends State<EditUserPage> {
     }
   }
 
-
   @override
   void dispose() {
     _nameController.dispose();
@@ -103,7 +119,7 @@ class _EditUserPageState extends State<EditUserPage> {
                       height: 130,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(24),
-                        color: (_image == null && _webImage == null)
+                        color: (_image == null && _webImage == null && widget.initialProfileImageUrl == null)
                             ? Colors.grey[300]
                             : null,
                         image: _image != null
@@ -116,7 +132,12 @@ class _EditUserPageState extends State<EditUserPage> {
                                     image: MemoryImage(_webImage!),
                                     fit: BoxFit.cover,
                                   )
-                                : null,
+                                : widget.initialProfileImageUrl != null
+                                    ? DecorationImage(
+                                        image: NetworkImage(widget.initialProfileImageUrl!),
+                                        fit: BoxFit.cover,
+                                      )
+                                    : null,
                       ),
                       child: (_image == null && _webImage == null)
                           ? Center(
@@ -133,13 +154,13 @@ class _EditUserPageState extends State<EditUserPage> {
                   CustomTextField(
                     controller: _nameController,
                     labelText: 'Full name',
-                    initialText: 'Anna Montana',
+                    initialText:  widget.initialFullName ?? 'Enter your name',
                   ),
                   const SizedBox(height: 25),
                   CustomTextField(
                     controller: _emailController,
                     labelText: 'Email address',
-                    initialText: 'user@example.com',
+                    initialText:  widget.initialEmail ?? 'Enter your email',
                   ),
                   isMobile ? 
                   const Spacer() : SizedBox(height: 220),
