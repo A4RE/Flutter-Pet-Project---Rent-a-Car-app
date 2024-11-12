@@ -3,8 +3,8 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../Services/auth_service.dart';
 import '../Models/car_model.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter/foundation.dart'; // Для использования kIsWeb
-import 'dart:io'; // Для проверки платформы
+import 'package:flutter/foundation.dart';
+import 'dart:io';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage> {
     return carData.map((data) {
       return Car(
         name: data['name'],
-        imageUrl: List<String>.from(data['photos'].map((photo) => baseURL + photo)),
+        imageUrl: data['photos'].isNotEmpty ? List<String>.from(data['photos'].map((photo) => baseURL + photo)) : [''],
         rentalPricePerDay: (data['rentalPricePerDay'] as num).toInt(),
         rating: data['rating'].toDouble(),
         reviewCount: (data['reviewCount'] as num).toInt(),
@@ -169,6 +169,8 @@ class _HomePageState extends State<HomePage> {
                                   setState(() {});
                                 },
                                 itemBuilder: (context, index) {
+                                  final promotion = allPromotions[index];
+                                  final imageUrl = promotion['photo'] ?? '';
                                   return Container(
                                     margin: const EdgeInsets.symmetric(horizontal: 8.0),
                                     child: Column(
@@ -178,15 +180,15 @@ class _HomePageState extends State<HomePage> {
                                           height: imageHeight,
                                           decoration: BoxDecoration(
                                             borderRadius: BorderRadius.circular(16),
-                                            image: DecorationImage(
-                                              image: NetworkImage('$baseURL${allPromotions[index]['photo']}'),
-                                              fit: BoxFit.cover,
-                                            ),
+                                            color: imageUrl.isNotEmpty ? null : Colors.grey,
+                                            image: imageUrl.isNotEmpty ? DecorationImage(
+                                              image: NetworkImage('$baseURL$imageUrl'), 
+                                              fit: BoxFit.cover) : null,
                                           ),
                                         ),
                                         const SizedBox(height: 8),
                                         Text(
-                                          '${allPromotions[index]['name']}',
+                                          promotion['name'] ?? 'No Name',
                                           style: const TextStyle(
                                             fontSize: 20,
                                             fontWeight: FontWeight.bold,
