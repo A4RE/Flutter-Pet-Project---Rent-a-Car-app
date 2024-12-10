@@ -77,6 +77,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+
     bool isMobile = !kIsWeb && (Platform.isAndroid || Platform.isIOS);
 
     Widget content = Column(
@@ -203,26 +204,45 @@ class _ProfilePageState extends State<ProfilePage> {
     );
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: const Text(
-          'Profile',
-          style: TextStyle(
-              color: Color(0xFF192252), fontSize: 25, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: false,
-      ),
-      body: Container(
-        color: Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: isMobile
-            ? content
-            : SingleChildScrollView( 
-                child: content,
+      body: Stack(
+        children: [
+          Positioned(
+            top: isMobile ? 0 : 120,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: isMobile
+                    ? content
+                    : SingleChildScrollView(
+                        child: content,
+                      ),
               ),
-        ),
+            ),
+          ),
+
+          Positioned(
+            top: isMobile ? 0 : 59,
+            left: 0,
+            right: 0,
+            child: AppBar(
+              backgroundColor: Colors.white,
+              elevation: 0,
+              title: const Text(
+                'Profile',
+                style: TextStyle(
+                  color: Color(0xFF192252),
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              centerTitle: false,
+            ),
+          ),
+        ],
       ),
     );
   }
