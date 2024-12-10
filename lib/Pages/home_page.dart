@@ -99,7 +99,7 @@ class _HomePageState extends State<HomePage> {
       body: Stack(
         children: [
           Positioned.fill(
-            top: isMobile ? 0 : 110,
+            top: 115,
             left: 0,
             right: 0,
             child: isLoading

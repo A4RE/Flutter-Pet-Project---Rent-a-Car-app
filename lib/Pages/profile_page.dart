@@ -207,7 +207,7 @@ class _ProfilePageState extends State<ProfilePage> {
       body: Stack(
         children: [
           Positioned(
-            top: isMobile ? 0 : 120,
+            top: 120,
             left: 0,
             right: 0,
             bottom: 0,
