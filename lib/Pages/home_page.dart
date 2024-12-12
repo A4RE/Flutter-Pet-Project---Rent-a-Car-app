@@ -5,6 +5,7 @@ import '../Models/car_model.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:io';
+import '../generated/l10n.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -183,20 +184,20 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ),
                             const SizedBox(height: 27),
-                            const Padding(
+                            Padding(
                               padding: EdgeInsets.symmetric(horizontal: 8.0),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    'Popular cars',
+                                    S.of(context).popularCars,
                                     style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                   Text(
-                                    'see all',
+                                    S.of(context).seeAll,
                                     style: TextStyle(
                                       fontSize: 20,
                                       color: Color(0xFF192252),
@@ -225,11 +226,12 @@ class _HomePageState extends State<HomePage> {
                                         );
                                       },
                                       child: carCard(
+                                        context: context,
                                         imageUrl: popularCars[index].imageUrl[0],
                                         title: popularCars[index].name,
                                         price: popularCars[index].rentalPricePerDay,
                                         rating: popularCars[index].rating.toString(),
-                                        numOfReviews: '(${popularCars[index].reviewCount} reviews)',
+                                        numOfReviews: '(${popularCars[index].reviewCount})',
                                         isHorizontalScroll: true,
                                       ),
                                     );
@@ -237,10 +239,10 @@ class _HomePageState extends State<HomePage> {
                                 ),
                               ),
                             ),
-                            const Padding(
+                            Padding(
                               padding: EdgeInsets.fromLTRB(8, 0, 22, 8),
                               child: Text(
-                                'All cars',
+                                S.of(context).allCars,
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
@@ -275,11 +277,12 @@ class _HomePageState extends State<HomePage> {
                                           );
                                         },
                                           child: carCard(
+                                          context: context,
                                           imageUrl: allCars[index].imageUrl[0],
                                           title: allCars[index].name,
                                           price: allCars[index].rentalPricePerDay,
                                           rating: allCars[index].rating.toString(),
-                                          numOfReviews: '(${allCars[index].reviewCount} reviews)',
+                                          numOfReviews: '(${allCars[index].reviewCount}',
                                           isHorizontalScroll: false
                                           ,
                                         ),
@@ -304,13 +307,13 @@ class _HomePageState extends State<HomePage> {
             child: AppBar(
               backgroundColor: Colors.white,
               elevation: 0,
-              title: const Column(
+              title: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
                       Text(
-                        'Your location',
+                        S.of(context).yourLocation,
                         style: TextStyle(
                           color: Color(0xFF848FAC),
                           fontSize: 18,
@@ -322,7 +325,7 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                   Text(
-                    'Moscow, Russia',
+                    S.of(context).moscowRussia,
                     style: TextStyle(
                       color: Color(0xFF192252),
                       fontSize: 20,
@@ -355,6 +358,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   static Widget carCard({
+    required BuildContext context,
     required String imageUrl,
     required String title,
     required int price,
@@ -362,9 +366,13 @@ class _HomePageState extends State<HomePage> {
     required String numOfReviews,
     bool isHorizontalScroll = false,
   }) {
-    String formattedReviews = int.parse(numOfReviews.replaceAll(RegExp(r'\D'), '')) >= 100
-        ? '(100+ reviews)'
-        : '($numOfReviews reviews)';
+    int numOfReviewsInt = int.parse(numOfReviews.replaceAll(RegExp(r'\D'), ''));
+      String formattedReviews;
+    if (numOfReviewsInt >= 100) {
+      formattedReviews = S.of(context).reviews_100_plus;
+    } else {
+      formattedReviews = S.of(context).reviews(numOfReviewsInt);
+    }
 
     return Container(
       width: 180,
@@ -443,7 +451,7 @@ class _HomePageState extends State<HomePage> {
           Padding(
             padding: const EdgeInsets.only(left: 8, bottom: 8, right: 8),
             child: Text(
-              '${NumberFormat('#,###', 'ru_RU').format(price)} ₽ / day',
+              '${NumberFormat('#,###', 'ru_RU').format(price)} ₽ / ${S.of(context).day}',
               style: const TextStyle(
                 fontSize: 15,
                 color: Color(0xFF192252),

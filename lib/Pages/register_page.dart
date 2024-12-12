@@ -3,8 +3,9 @@ import '../Services/auth_service.dart';
 import 'tab_bar.dart';
 import '../Components/text_field.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/foundation.dart'; // Для использования kIsWeb
-import 'dart:io'; // Для проверки платформы
+import 'package:flutter/foundation.dart';
+import 'dart:io';
+import '../generated/l10n.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -61,8 +62,8 @@ class _RegisterPageState extends State<RegisterPage> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text('Registration Failed'),
-            content: Text(result['error'] ?? 'Registration failed. Please try again.'),
+            title: Text(S.of(context).registrationFailed),
+            content: Text(result['error'] ?? S.of(context).registrationFailedPleaseTryAgain),
             actions: [
               TextButton(
                 onPressed: () {
@@ -87,23 +88,23 @@ class _RegisterPageState extends State<RegisterPage> {
         const SizedBox(height: 40),
         CustomTextField(
           controller: _fullNameController, 
-          labelText: 'Full name'
+          labelText: S.of(context).fullName
         ),
         const SizedBox(height: 24),
         CustomTextField(
           controller: _emailController, 
-          labelText: 'Email address'
+          labelText: S.of(context).emailAdress
         ),
         const SizedBox(height: 24),
         CustomTextField(
           controller: _passwordController, 
-          labelText: 'Password',
+          labelText: S.of(context).password,
           isObscure: true,
         ),
         const SizedBox(height: 24),
         CustomTextField(
           controller: _confirmPasswordController, 
-          labelText: 'Confirm password',
+          labelText: S.of(context).confirmPassword,
           isObscure: true,
         ),
         const SizedBox(height: 43),
@@ -119,8 +120,8 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 minimumSize: const Size(double.infinity, 50),
               ),
-              child: const Text(
-                'Register',
+              child: Text(
+                S.of(context).registerBtn,
                 style: TextStyle(
                   fontFamily: "Urbanist",
                   fontSize: 25,
@@ -140,8 +141,8 @@ class _RegisterPageState extends State<RegisterPage> {
               Navigator.pop(context);
             },
             child: RichText(
-              text: const TextSpan(
-                text: "Already have an account? ",
+              text: TextSpan(
+                text: S.of(context).alreadyHaveAnAccount,
                 style: TextStyle(
                   fontFamily: "Urbanist",
                   color: Color(0xFF424F7B),
@@ -149,7 +150,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 children: <TextSpan>[
                   TextSpan(
-                    text: 'Login',
+                    text: S.of(context).login,
                     style: TextStyle(
                       fontFamily: "Urbanist",
                       color: Color(0xFF103F74),
@@ -167,8 +168,8 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: const Text(
-          'Register',
+        title: Text(
+          S.of(context).registerTitle,
           style: TextStyle(
             fontSize: 30,
             fontWeight: FontWeight.bold,

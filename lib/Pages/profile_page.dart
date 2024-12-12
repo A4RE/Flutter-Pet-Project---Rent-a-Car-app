@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:io';
 import '../Services/auth_service.dart';
+import '../generated/l10n.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -137,8 +138,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
-                  overflow: TextOverflow.ellipsis, // Обрезка текста с троеточием
-                  maxLines: 1, // Установка максимального количества строк
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
                 ),
                 const Spacer(),
                 const ImageIcon(
@@ -153,19 +154,19 @@ class _ProfilePageState extends State<ProfilePage> {
         const SizedBox(height: 30),
         CustomButton(
           iconPath: 'assets/images/lock-circle.png',
-          label: 'Change password',
+          label: S.of(context).changePassword,
           onTap: () {},
         ),
         const SizedBox(height: 21),
         CustomButton(
           iconPath: 'assets/images/empty-wallet.png',
-          label: 'Billing information',
+          label: S.of(context).billingInformation,
           onTap: () {},
         ),
         const SizedBox(height: 21),
         CustomButton(
           iconPath: 'assets/images/direct-inbox.png',
-          label: 'Notifications',
+          label: S.of(context).notifications,
           onTap: () {},
         ),
         isMobile ? 
@@ -173,7 +174,7 @@ class _ProfilePageState extends State<ProfilePage> {
         Column(
           children: [
             CustomActionButton(
-              label: 'Log Out',
+              label: S.of(context).logOut,
               isPrimary: true,
               onTap: () async {
                 await _logout();
@@ -186,7 +187,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             const SizedBox(height: 20),
             CustomActionButton(
-              label: 'Delete account',
+              label: S.of(context).deleteAccount,
               isPrimary: false,
               onTap: () async {
                 await _logout();
@@ -231,8 +232,8 @@ class _ProfilePageState extends State<ProfilePage> {
             child: AppBar(
               backgroundColor: Colors.white,
               elevation: 0,
-              title: const Text(
-                'Profile',
+              title: Text(
+                S.of(context).profile,
                 style: TextStyle(
                   color: Color(0xFF192252),
                   fontSize: 25,

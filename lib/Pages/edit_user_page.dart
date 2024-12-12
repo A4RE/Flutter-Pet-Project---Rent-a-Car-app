@@ -7,6 +7,7 @@ import '../Components/text_field.dart';
 import '../Components/custom_action_button.dart';
 import 'package:flutter/foundation.dart';
 import '../Services/auth_service.dart';
+import '../generated/l10n.dart';
 
 
 class EditUserPage extends StatefulWidget {
@@ -25,8 +26,7 @@ class EditUserPage extends StatefulWidget {
 }
 
 class _EditUserPageState extends State<EditUserPage> {
-  // final TextEditingController _nameController = TextEditingController();
-  // final TextEditingController _emailController = TextEditingController();
+
   late TextEditingController _nameController;
   late TextEditingController _emailController;
 
@@ -76,7 +76,7 @@ class _EditUserPageState extends State<EditUserPage> {
 
     if (response['success']) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('User updated successfully')),
+        SnackBar(content: Text(S.of(context).userUpdatedSuccessfully)),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -100,10 +100,10 @@ class _EditUserPageState extends State<EditUserPage> {
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
               child: Column(
                 children: [
-                  const Align(
+                  Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'Update user info',
+                      S.of(context).updateUserInfo,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 25,
@@ -153,19 +153,19 @@ class _EditUserPageState extends State<EditUserPage> {
                   const SizedBox(height: 35),
                   CustomTextField(
                     controller: _nameController,
-                    labelText: 'Full name',
-                    initialText:  widget.initialFullName ?? 'Enter your name',
+                    labelText: S.of(context).fullName,
+                    initialText:  widget.initialFullName ?? S.of(context).enterYourName,
                   ),
                   const SizedBox(height: 25),
                   CustomTextField(
                     controller: _emailController,
-                    labelText: 'Email address',
-                    initialText:  widget.initialEmail ?? 'Enter your email',
+                    labelText: S.of(context).emailAdress,
+                    initialText:  widget.initialEmail ?? S.of(context).enterYourEmail,
                   ),
                   isMobile ? 
                   const Spacer() : SizedBox(height: 220),
                   CustomActionButton(
-                    label: 'Update info',
+                    label: S.of(context).updateInfo,
                     isPrimary: true,
                     onTap: _updateUserInfo,
                   ),

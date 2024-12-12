@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../Models/car_model.dart';
 import 'package:intl/intl.dart';
+import '../generated/l10n.dart';
 
 class DetailPage extends StatefulWidget {
   
@@ -147,7 +148,9 @@ class _DetailPageState extends State<DetailPage> {
                             ),
                             const SizedBox(width: 10),
                             Text(
-                              '(${widget.car.reviewCount > 100 ? 100 : widget.car.reviewCount}+ reviews)',
+                              widget.car.reviewCount >= 100
+                                ? S.of(context).reviews_100_plus
+                                : S.of(context).reviews(widget.car.reviewCount),
                               style: const TextStyle(
                                 fontSize: 15,
                                 color: Color(0xFF192252),
@@ -167,10 +170,10 @@ class _DetailPageState extends State<DetailPage> {
                             ),
                           ),
                         ),
-                      const Padding(
+                      Padding(
                         padding: EdgeInsets.only(top: 5, left: 16, right: 16, bottom: 20),
                         child: Text(
-                          'CAR INFO',
+                          S.of(context).carInfo,
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -182,13 +185,13 @@ class _DetailPageState extends State<DetailPage> {
                         padding: const EdgeInsets.only(bottom: 150, left: 16, right: 16),
                         child: Column(
                           children: [
-                            InfoRow(label: 'Engine', value: widget.car.engine),
+                            InfoRow(label: S.of(context).engine, value: widget.car.engine),
                             const SizedBox(height: 20),
-                            InfoRow(label: 'Power', value: '${widget.car.power} hp'),
+                            InfoRow(label: S.of(context).power, value: S.of(context).horsepower(widget.car.power.toString())),
                             const SizedBox(height: 20),
-                            InfoRow(label: 'Fuel', value: widget.car.fuel),
+                            InfoRow(label: S.of(context).fuel, value: widget.car.fuel),
                             const SizedBox(height: 20),
-                            InfoRow(label: 'Color', value: widget.car.color),
+                            InfoRow(label: S.of(context).color, value: widget.car.color),
                             const SizedBox(height: 20),
                             InfoRow(label: 'Drivetrain', value: widget.car.drivetrain),
                           ],
@@ -225,7 +228,7 @@ class _DetailPageState extends State<DetailPage> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          '${NumberFormat('#,###', 'ru_RU').format(widget.car.rentalPricePerDay)} ₽ / day',
+                          '${NumberFormat('#,###', 'ru_RU').format(widget.car.rentalPricePerDay)} ₽ / ${S.of(context).day}',
                           style: const TextStyle(
                             fontSize: 15,
                             color: Color(0xFF192252),
@@ -243,10 +246,10 @@ class _DetailPageState extends State<DetailPage> {
                       onPressed: () {
     
                       },
-                      child: const Padding(
+                      child: Padding(
                         padding: EdgeInsets.symmetric(vertical: 20, horizontal: 14),
                         child: Text(
-                          'Rent Car',
+                          S.of(context).rentCar,
                           style: TextStyle(
                             fontSize: 12,
                             color: Colors.white

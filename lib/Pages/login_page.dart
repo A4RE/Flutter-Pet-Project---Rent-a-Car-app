@@ -3,8 +3,9 @@ import '../Services/auth_service.dart';
 import 'tab_bar.dart';
 import '../Components/text_field.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/foundation.dart'; // Для использования kIsWeb
-import 'dart:io'; // Для проверки платформы
+import 'package:flutter/foundation.dart';
+import 'dart:io';
+import '../generated/l10n.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -45,8 +46,8 @@ class _LoginPageState extends State<LoginPage> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text('Login Failed'),
-            content: Text(result['error'] ?? 'Login failed. Please try again.'),
+            title: Text(S.of(context).loginFailed),
+            content: Text(result['error'] ?? S.of(context).loginFailedPleaseTryAgain),
             actions: [
               TextButton(
                 onPressed: () {
@@ -60,14 +61,6 @@ class _LoginPageState extends State<LoginPage> {
       );
     }
   }
-
-  // Future<void> _saveLoginState(int userId, String email, String password) async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   await prefs.setBool('isLogged', true);
-  //   await prefs.setInt('userId', userId);
-  //   await prefs.setString('email', email); // Сохраняем email
-  //   await prefs.setString('password', password); // Сохраняем password
-  // }
 
   void _checkFields() {
     setState(() {
@@ -86,8 +79,8 @@ class _LoginPageState extends State<LoginPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 82),
-        const Text(
-          "Welcome!\nLogin to your account,\nOr create new one",
+        Text(
+          S.of(context).welcomeLogin,
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -97,12 +90,12 @@ class _LoginPageState extends State<LoginPage> {
         const SizedBox(height: 62),
         CustomTextField(
           controller: _emailController, 
-          labelText: 'Email address'
+          labelText: S.of(context).emailAdress
         ),
         const SizedBox(height: 25),
         CustomTextField(
           controller: _passwordController, 
-          labelText: 'Password',
+          labelText: S.of(context).password,
           isObscure: true,
         ),
         Align(
@@ -110,7 +103,7 @@ class _LoginPageState extends State<LoginPage> {
           child: TextButton(
             onPressed: () {},
             child: Text(
-              'Forgot password?',
+              S.of(context).forgotPassword,
               style: TextStyle(
                 color: const Color.fromARGB(255, 178, 188, 222).withOpacity(0.7),
                 fontFamily: "Urbanist",
@@ -133,8 +126,8 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 minimumSize: const Size(double.infinity, 50),
               ),
-              child: const Text(
-                'Login',
+              child: Text(
+                S.of(context).login,
                 style: TextStyle(
                   fontFamily: "Urbanist",
                   fontSize: 25,
@@ -153,10 +146,10 @@ class _LoginPageState extends State<LoginPage> {
                 color: const Color(0xFF424F7B).withOpacity(0.5),
               ),
             ),
-            const Padding(
+            Padding(
               padding: EdgeInsets.symmetric(horizontal: 8.0),
               child: Text(
-                "or login with",
+                S.of(context).orLoginWith,
                 style: TextStyle(
                   color: Color(0xFF424F7B),
                   fontFamily: "Urbanist",
@@ -203,8 +196,8 @@ class _LoginPageState extends State<LoginPage> {
               Navigator.pushNamed(context, '/register');
             },
             child: RichText(
-              text: const TextSpan(
-                text: "Don't have an account? ",
+              text: TextSpan(
+                text: S.of(context).dontHaveAnAccount,
                 style: TextStyle(
                   fontFamily: "Urbanist",
                   color: Color(0xFF424F7B),
@@ -212,7 +205,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 children: <TextSpan>[
                   TextSpan(
-                    text: 'Register',
+                    text: S.of(context).registerBtn,
                     style: TextStyle(
                       fontFamily: "Urbanist",
                       color: Color(0xFF103F74),
