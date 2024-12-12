@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../Services/auth_service.dart';
 import 'tab_bar.dart';
 import '../Components/text_field.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:io';
 import '../generated/l10n.dart';
