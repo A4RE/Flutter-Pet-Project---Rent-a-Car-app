@@ -20,10 +20,8 @@ class _LoadingScreenState extends State<LoadingScreen> {
   }
 
   Future<void> _attemptAutoLogin() async {
-    // Пытаемся автоматически войти в систему с сохраненными данными
     final result = await _authService.autoLogin();
 
-    // Через 3 секунды переходим на соответствующий экран
     Future.delayed(const Duration(seconds: 3), () {
       if (result['success']) {
         Navigator.pushReplacement(

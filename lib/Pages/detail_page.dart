@@ -17,6 +17,19 @@ class DetailPage extends StatefulWidget {
 class _DetailPageState extends State<DetailPage> {
   final PageController _pageController = PageController();
 
+  double _calculateDynamicHeight(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    
+    if (screenWidth < 400) {
+      return 200;
+    } else if (screenWidth > 800) {
+      return 800;
+    } else {
+      return 200 + (screenWidth - 400) * (400 / 400);
+    }
+  }
+
+
   @override
   void dispose() {
     _pageController.dispose();
@@ -56,7 +69,7 @@ class _DetailPageState extends State<DetailPage> {
                     ),
                   ),
                 ),
-                expandedHeight: 260,
+                expandedHeight: _calculateDynamicHeight(context),
                 floating: false,
                 pinned: true,
                 flexibleSpace: LayoutBuilder(
@@ -110,6 +123,9 @@ class _DetailPageState extends State<DetailPage> {
                   },
                 ),
               ),
+
+
+
               SliverToBoxAdapter(
                 child: Container(
                   color: Colors.white,

@@ -100,9 +100,10 @@ class _HomePageState extends State<HomePage> {
       body: Stack(
         children: [
           Positioned.fill(
-            top: 115,
-            left: 0,
-            right: 0,
+            top: 117,
+            left: 8,
+            right: 8,
+            bottom: 50,
             child: isLoading
               ? const Center(child: CircularProgressIndicator())
               : RefreshIndicator(
@@ -110,193 +111,187 @@ class _HomePageState extends State<HomePage> {
                   child: Container(
                     color: Colors.white,
                     child: SingleChildScrollView(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            LayoutBuilder(
-                              builder: (context, constraints) {
-                                double screenWidth = constraints.maxWidth;
-                                double blockHeight = (screenWidth / 3).clamp(200, 400);
-                                double imageHeight = (blockHeight - 50).clamp(150, 350);
-
-                                return SizedBox(
-                                  height: blockHeight,
-                                  child: PageView.builder(
-                                    controller: _pageController,
-                                    itemCount: allPromotions.length,
-                                    onPageChanged: (int index) {
-                                      setState(() {});
-                                    },
-                                    itemBuilder: (context, index) {
-                                      final promotion = allPromotions[index];
-                                      final imageUrl = promotion['photo'] ?? '';
-                                      return Container(
-                                        margin: const EdgeInsets.symmetric(horizontal: 8.0),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                              height: imageHeight,
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(16),
-                                                color: imageUrl.isNotEmpty ? null : Colors.grey,
-                                                image: imageUrl.isNotEmpty ? DecorationImage(
-                                                  image: NetworkImage('$baseURL$imageUrl'), 
-                                                  fit: BoxFit.cover) : null,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 8),
-                                            Text(
-                                              promotion['name'] ?? 'No Name',
-                                              style: const TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                                fontFamily: "Urbanist",
-                                              ),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                );
-                              },
-                            ),
-                            const SizedBox(height: 10),
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                child: allPromotions.length > 1 ? SmoothPageIndicator(
+                      padding: EdgeInsets.only(top: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          LayoutBuilder(
+                            builder: (context, constraints) {
+                              double screenWidth = constraints.maxWidth;
+                              double blockHeight = (screenWidth / 3).clamp(200, 400);
+                              double imageHeight = (blockHeight - 50).clamp(150, 350);
+                      
+                              return SizedBox(
+                                height: blockHeight,
+                                child: PageView.builder(
                                   controller: _pageController,
-                                  count: allPromotions.length,
-                                  effect: const ExpandingDotsEffect(
-                                    expansionFactor: 4.0,
-                                    activeDotColor: Color(0xFF192252),
-                                    dotColor: Color(0xFFD9D9D9),
-                                    dotHeight: 8,
-                                    dotWidth: 8,
-                                    spacing: 4.0,
-                                  ),
-                                ) : const SizedBox.shrink(),
-                              ),
-                            ),
-                            const SizedBox(height: 27),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    S.of(context).popularCars,
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Text(
-                                    S.of(context).seeAll,
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      color: Color(0xFF192252),
-                                      fontFamily: "Urbanist",
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 22),
-                              child: SizedBox(
-                                height: 220,
-                                child: ListView.builder(
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: popularCars.length,
-                                  shrinkWrap: true,
-                                  physics: const ClampingScrollPhysics(),
+                                  itemCount: allPromotions.length,
+                                  onPageChanged: (int index) {
+                                    setState(() {});
+                                  },
                                   itemBuilder: (context, index) {
-                                    return InkWell(
-                                      onTap: () {
-                                        Navigator.pushNamed(
-                                          context, 
-                                          '/detailPage',
-                                          arguments: popularCars[index],
-                                        );
-                                      },
-                                      child: carCard(
-                                        context: context,
-                                        imageUrl: popularCars[index].imageUrl[0],
-                                        title: popularCars[index].name,
-                                        price: popularCars[index].rentalPricePerDay,
-                                        rating: popularCars[index].rating.toString(),
-                                        numOfReviews: '(${popularCars[index].reviewCount})',
-                                        isHorizontalScroll: true,
+                                    final promotion = allPromotions[index];
+                                    final imageUrl = promotion['photo'] ?? '';
+                                    return Container(
+                                      margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            height: imageHeight,
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(16),
+                                              color: imageUrl.isNotEmpty ? null : Colors.grey,
+                                              image: imageUrl.isNotEmpty ? DecorationImage(
+                                                image: NetworkImage('$baseURL$imageUrl'), 
+                                                fit: BoxFit.cover) : null,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            promotion['name'] ?? 'No Name',
+                                            style: const TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              fontFamily: "Urbanist",
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ],
                                       ),
                                     );
                                   },
                                 ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(8, 0, 22, 8),
-                              child: Text(
-                                S.of(context).allCars,
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF192252),
-                                ),
-                              ),
-                            ),
-                            Padding(
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 10),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: LayoutBuilder(
-                                builder: (context, constraints) {
-                                  double screenWidth = constraints.maxWidth;
-                                  int crossAxisCount = (screenWidth ~/ 180).clamp(2, double.infinity).toInt();
-
-                                  return GridView.builder(
-                                    physics: const NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: crossAxisCount,
-                                      mainAxisSpacing: 22,
-                                      crossAxisSpacing: 8,
-                                      childAspectRatio: 180 / 220,
-                                    ),
-                                    itemCount: allCars.length,
-                                    itemBuilder: (context, index) {
-                                      return InkWell(
-                                        onTap: () {
-                                          Navigator.pushNamed(
-                                            context, 
-                                            '/detailPage',
-                                            arguments: allCars[index],
-                                          );
-                                        },
-                                          child: carCard(
-                                          context: context,
-                                          imageUrl: allCars[index].imageUrl[0],
-                                          title: allCars[index].name,
-                                          price: allCars[index].rentalPricePerDay,
-                                          rating: allCars[index].rating.toString(),
-                                          numOfReviews: '(${allCars[index].reviewCount}',
-                                          isHorizontalScroll: false
-                                          ,
-                                        ),
+                              child: allPromotions.length > 1 ? SmoothPageIndicator(
+                                controller: _pageController,
+                                count: allPromotions.length,
+                                effect: const ExpandingDotsEffect(
+                                  expansionFactor: 4.0,
+                                  activeDotColor: Color(0xFF192252),
+                                  dotColor: Color(0xFFD9D9D9),
+                                  dotHeight: 8,
+                                  dotWidth: 8,
+                                  spacing: 4.0,
+                                ),
+                              ) : const SizedBox.shrink(),
+                            ),
+                          ),
+                          const SizedBox(height: 27),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  S.of(context).popularCars,
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  S.of(context).seeAll,
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    color: Color(0xFF192252),
+                                    fontFamily: "Urbanist",
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 22),
+                            child: SizedBox(
+                              height: 220,
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: popularCars.length,
+                                shrinkWrap: true,
+                                physics: const ClampingScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  return InkWell(
+                                    onTap: () {
+                                      Navigator.pushNamed(
+                                        context, 
+                                        '/detailPage',
+                                        arguments: popularCars[index],
                                       );
                                     },
+                                    child: carCard(
+                                      context: context,
+                                      imageUrl: popularCars[index].imageUrl[0],
+                                      title: popularCars[index].name,
+                                      price: popularCars[index].rentalPricePerDay,
+                                      rating: popularCars[index].rating.toString(),
+                                      numOfReviews: '(${popularCars[index].reviewCount})',
+                                      isHorizontalScroll: true,
+                                    ),
                                   );
                                 },
                               ),
                             ),
-                            const SizedBox(height: 50),
-                          ],
-                        ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(8, 0, 0, 22),
+                            child: Text(
+                              S.of(context).allCars,
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF192252),
+                              ),
+                            ),
+                          ),
+                          LayoutBuilder(
+                            builder: (context, constraints) {
+                              double screenWidth = constraints.maxWidth;
+                              int crossAxisCount = (screenWidth ~/ 180).clamp(2, double.infinity).toInt();
+                                                
+                              return GridView.builder(
+                                padding: EdgeInsets.fromLTRB(0, 0, 0, 50),
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: crossAxisCount,
+                                  mainAxisSpacing: 22,
+                                  crossAxisSpacing: 8,
+                                  childAspectRatio: 180 / 220,
+                                ),
+                                itemCount: allCars.length,
+                                itemBuilder: (context, index) {
+                                  return InkWell(
+                                    onTap: () {
+                                      Navigator.pushNamed(
+                                        context, 
+                                        '/detailPage',
+                                        arguments: allCars[index],
+                                      );
+                                    },
+                                      child: carCard(
+                                      context: context,
+                                      imageUrl: allCars[index].imageUrl[0],
+                                      title: allCars[index].name,
+                                      price: allCars[index].rentalPricePerDay,
+                                      rating: allCars[index].rating.toString(),
+                                      numOfReviews: '(${allCars[index].reviewCount}',
+                                      isHorizontalScroll: false
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ],
                       ),
                     ),
                   ),
