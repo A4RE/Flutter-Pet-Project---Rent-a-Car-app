@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:mime/mime.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:intl/intl.dart';
 
 
 class NetworkService {
@@ -12,6 +13,16 @@ class NetworkService {
   final String baseUrl = 'http://localhost:8080';
 
   String? _cachedSessionId;
+
+  Future<String> _getLanguage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedLanguage = prefs.getString('language');
+    if (savedLanguage != null) {
+      return savedLanguage;
+    }
+    print(Intl.getCurrentLocale());
+    return Intl.getCurrentLocale();
+  }
 
   Future<String?> _getSessionId() async {
     if (_cachedSessionId == null) {
@@ -216,12 +227,15 @@ class NetworkService {
 
   Future<List<Map<String, dynamic>>> _getWithSession(String url) async {
     final sessionId = await _getSessionId();
+    final language = await _getLanguage();
+
     try {
       final response = await http.get(
         Uri.parse(url),
         headers: {
           'Content-Type': 'application/json',
           if (sessionId != null) 'Authorization': 'Bearer $sessionId',
+          'Accept-Language': language,
         },
       );
 

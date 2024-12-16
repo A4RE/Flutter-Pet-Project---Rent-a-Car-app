@@ -155,6 +155,8 @@ class _HomePageState extends State<HomePage> {
                                                 fontWeight: FontWeight.bold,
                                                 fontFamily: "Urbanist",
                                               ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
                                             ),
                                           ],
                                         ),
