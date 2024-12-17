@@ -6,11 +6,13 @@ import 'dart:convert';
 import 'package:mime/mime.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 
 class NetworkService {
 
   final String baseUrl = 'http://localhost:8080';
+  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   String? _cachedSessionId;
 
@@ -35,7 +37,7 @@ class NetworkService {
   Future<Map<String, dynamic>> autoLogin() async {
     final prefs = await SharedPreferences.getInstance();
     final email = prefs.getString('email');
-    final password = prefs.getString('password');
+    final password = await _secureStorage.read(key: 'password');
 
     if (email != null && password != null) {
       return await login(email, password);
@@ -284,20 +286,26 @@ class NetworkService {
   Future<void> _saveSessionData(String sessionId, String email, String password, int userId) async {
     final prefs = await SharedPreferences.getInstance();
     _cachedSessionId = sessionId;
+    
     await prefs.setString('sessionId', sessionId);
     await prefs.setString('email', email);
-    await prefs.setString('password', password);
     await prefs.setInt('userId', userId);
+
+    // Сохраняем пароль в безопасное хранилище
+    await _secureStorage.write(key: 'password', value: password);
   }
 
   Future<void> _clearSessionData() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('sessionId');
     await prefs.remove('email');
-    await prefs.remove('password');
     await prefs.remove('userId');
     _cachedSessionId = null;
+
+    // Удаляем пароль из безопасного хранилища
+    await _secureStorage.delete(key: 'password');
   }
+
 
 
   Map<String, dynamic> _handleErrorResponse(http.Response response) {
